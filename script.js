@@ -1,18 +1,29 @@
 // Author: Hoang Tran (https://www.facebook.com/profile.php?id=100004848287494)
 // Github verson (1 file .html): https://github.com/HoangTran0410/3DCarousel/blob/master/index.html
 
+// Responsive variables
+var radius = window.innerWidth < 480 ? 160 : 
+             window.innerWidth < 768 ? 200 : 240;
+var autoRotate = true;
+var rotateSpeed = -60;
+var imgWidth = window.innerWidth < 480 ? 80 : 
+               window.innerWidth < 768 ? 100 : 120;
+var imgHeight = window.innerWidth < 480 ? 120 : 
+                window.innerWidth < 768 ? 150 : 170;
 
-// You can change global variables here:
-var radius = 240; // how big of the radius
-var autoRotate = true; // auto rotate or not
-var rotateSpeed = -60; // unit: seconds/360 degrees
-var imgWidth = 120; // width of images (unit: px)
-var imgHeight = 170; // height of images (unit: px)
+// Update dimensions on window resize
+window.addEventListener('resize', () => {
+  radius = window.innerWidth < 480 ? 160 : 
+           window.innerWidth < 768 ? 200 : 240;
+  imgWidth = window.innerWidth < 480 ? 80 : 
+             window.innerWidth < 768 ? 100 : 120;
+  imgHeight = window.innerWidth < 480 ? 120 : 
+              window.innerWidth < 768 ? 150 : 170;
+  init();
+});
 
 // Link of background music - set 'null' if you dont want to play background music
-var bgMusicURL = 'https://api.soundcloud.com/tracks/143041228/stream?client_id=587aa2d384f7333a886010d5f52f302a';
-var bgMusicControls = true; // Show UI music control
-
+ // Show UI music control
 /*
      NOTE:
        + imgWidth, imgHeight will work for video
@@ -71,16 +82,21 @@ var sX, sY, nX, nY, desX = 0,
 if (autoRotate) {
   var animationName = (rotateSpeed > 0 ? 'spin' : 'spinRevert');
   ospin.style.animation = `${animationName} ${Math.abs(rotateSpeed)}s infinite linear`;
+  
 }
 
+ospin.addEventListener("mouseover",()=>{
+  playSpin(false);
+  // add background music
+
+
+})
+ospin.addEventListener("mouseleave",()=>{
+  playSpin(true);
+})
+
 // add background music
-if (bgMusicURL) {
-  document.getElementById('music-container').innerHTML += `
-<audio src="${bgMusicURL}" ${bgMusicControls? 'controls': ''} autoplay loop>    
-<p>If you are reading this, it is because your browser does not support the audio element.</p>
-</audio>
-`;
-}
+
 
 // setup events
 document.onpointerdown = function (e) {
@@ -122,6 +138,44 @@ document.onpointerdown = function (e) {
 };
 
 document.onmousewheel = function(e) {
+  e = e || window.event;
+  var d = e.wheelDelta / 20 || -e.detail;
+  radius += d;
+  init(1);
+};
+
+// Mobile touch events
+let touchStartX, touchStartY;
+
+document.addEventListener('touchstart', (e) => {
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+  e.preventDefault();
+});
+
+document.addEventListener('touchmove', (e) => {
+  if (!touchStartX || !touchStartY) return;
+  
+  let touchEndX = e.touches[0].clientX;
+  let touchEndY = e.touches[0].clientY;
+  
+  let deltaX = touchEndX - touchStartX;
+  let deltaY = touchEndY - touchStartY;
+  
+  tX += deltaX * 0.1;
+  tY += deltaY * 0.1;
+  applyTranform(odrag);
+  
+  touchStartX = touchEndX;
+  touchStartY = touchEndY;
+});
+
+document.addEventListener('touchend', () => {
+  touchStartX = null;
+  touchStartY = null;
+});
+
+document.ondblclick = function(e) {
   e = e || window.event;
   var d = e.wheelDelta / 20 || -e.detail;
   radius += d;
