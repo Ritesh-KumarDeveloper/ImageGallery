@@ -1,6 +1,6 @@
 // Author: Hoang Tran (https://www.facebook.com/profile.php?id=100004848287494)
 // Github verson (1 file .html): https://github.com/HoangTran0410/3DCarousel/blob/master/index.html
-
+alert("Please Zoom In/Out for better experience");
 // Responsive variables
 var radius = window.innerWidth < 480 ? 160 : 
              window.innerWidth < 768 ? 200 : 240;
